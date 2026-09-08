@@ -1,7 +1,7 @@
 local M = {
 	sound = {
 		music = false,
-		effects = false,
+		effects = true,
 	},
 	score_to_win = 3,
 	window = {
