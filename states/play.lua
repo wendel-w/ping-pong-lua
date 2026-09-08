@@ -1,5 +1,5 @@
-local Ball = require("objects/ball")
-local Plate = require("objects/plate")
+-- local Ball = require("objects/ball")
+-- local Plate = require("objects/plate")
 -- local Panels = require("objects/panels")
 local end_screen = require("states.end_screen")
 
@@ -9,9 +9,118 @@ local font
 
 local play = {}
 
-local ball = Ball:new()
+local distance = function(x1, y1, x2, y2)
+	return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2))
+end
+
+-- local ball = Ball:new()
+-- ball stuff start here
+local ball = {
+	x = config.ball.x,
+	y = config.ball.y,
+	radius = config.ball.radius,
+	speed = config.ball.speed,
+	angle = config.ball.angle,
+
+	fix_angle = function(self)
+		while self.angle < 0 do
+			self.angle = self.angle + 2 * math.pi
+		end
+		while self.angle >= 2 * math.pi do
+			self.angle = self.angle - 2 * math.pi
+		end
+	end,
+	bounce_horizontally = function(self)
+		self.angle = self.angle * -1
+		self:fix_angle()
+	end,
+	bounce_vertically = function(self)
+		self.angle = math.rad(180) - self.angle
+		self:fix_angle()
+	end,
+	move = function(self)
+		self.x = self.x + (self.speed * math.cos(self.angle))
+		self.y = self.y + (self.speed * math.sin(self.angle))
+
+		local top = love.graphics.getHeight() - config.bottom_panel.height
+		local bottom = config.top_panel.height
+
+		local left = 0
+		local right = love.graphics.getWidth()
+
+		if self.y + self.radius > top or self.y - self.radius < bottom then
+			self:bounce_horizontally()
+		end
+		if self.x + self.radius > right or self.x - self.radius < left then
+			self:bounce_vertically()
+			print("hitted left/right wall")
+		end
+	end,
+	draw = function(self)
+		love.graphics.circle("fill", self.x, self.y, self.radius)
+	end,
+	detect_collision = function(self, left_plate, right_plate)
+		local return_value = "none"
+		-- self:move()
+		self.x = self.x + (self.speed * math.cos(self.angle))
+		self.y = self.y + (self.speed * math.sin(self.angle))
+
+		local top = love.graphics.getHeight() - config.bottom_panel.height
+		local bottom = config.top_panel.height
+
+		local left = 0
+		local right = love.graphics.getWidth()
+
+		if self.y + self.radius > top or self.y - self.radius < bottom then
+			self:bounce_horizontally()
+		end
+		if (self.angle < math.rad(90) or math.rad(270) < self.angle) and self.x + self.radius > right then
+			self:bounce_vertically()
+			print("hit right wall")
+			return_value = "right"
+		end
+		if math.rad(90) < self.angle and self.angle < math.rad(270) and self.x - self.radius < left then
+			self:bounce_vertically()
+			print("hit left wall")
+			return_value = "left"
+		end
+
+		left = left_plate
+		right = right_plate
+		-- left
+		if math.rad(90) < self.angle and self.angle < math.rad(270) then
+			if
+				--check y coordinates
+				left.y < self.y
+				and self.y < left.y + left.height
+				and distance(self.x, 0, left.x + left.width, 0) < self.radius
+				--check x coordinates
+				and left.x < self.x - self.radius
+				and self.x - self.radius < left.x + left.width
+			then
+				self:bounce_vertically()
+			end
+		end
+		-- right
+		if math.rad(90) > self.angle or self.angle > math.rad(270) then
+			if
+				--check y coordinates
+				self.y > right.y
+				and self.y < right.y + right.height
+				and distance(self.x, 0, right.x, 0) < self.radius
+				--check x coordinates
+				and right.x < self.x + self.radius
+				and self.x + self.radius < right.x + right.width
+			then
+				self:bounce_vertically()
+			end
+		end
+		return return_value
+	end,
+}
+--ball stuff end here
+
 local UpdateAbilities = require("abilities")
--- local panels = Panels:new()
 
 local score_to_win = config.score_to_win
 local score = {
@@ -47,8 +156,59 @@ local function check_winner()
 end
 --- panel stuff end here
 
-local left_plate = Plate:new("left")
-local right_plate = Plate:new("right")
+--plate stuff starts here
+local plates = {
+	left = {
+		x = config.plates.x,
+		y = config.plates.y,
+		width = config.plates.width,
+		height = config.plates.height,
+		speed = config.plates.speed,
+	},
+	right = {
+		x = config.plates.x,
+		y = config.plates.y,
+		width = config.plates.width,
+		height = config.plates.height,
+		speed = config.plates.speed,
+	},
+	move = function(self)
+		local controls = require("config").plates.controls
+		local top_limit = require("config").top_panel.height
+		local bottom_limit = love.graphics.getHeight() - require("config").bottom_panel.height
+		--left
+		if top_limit < self.left.y then
+			if love.keyboard.isDown(controls.left_up) then
+				self.left.y = self.left.y - self.left.speed
+			end
+		end
+		if self.left.y + self.left.height < bottom_limit then
+			if love.keyboard.isDown(controls.left_down) then
+				self.left.y = self.left.y + self.left.speed
+			end
+		end
+		--right
+		if top_limit < self.right.y then
+			if love.keyboard.isDown(controls.right_up) then
+				self.right.y = self.right.y - self.right.speed
+			end
+		end
+		if self.right.y + self.right.height < bottom_limit then
+			if love.keyboard.isDown(controls.right_down) then
+				self.right.y = self.right.y + self.right.speed
+			end
+		end
+	end,
+	draw = function(self)
+		love.graphics.rectangle("fill", self.left.x, self.left.y, self.left.width, self.left.height)
+		self.right.x = love.graphics.getWidth() - config.plates.x - self.right.width
+		love.graphics.rectangle("fill", self.right.x, self.right.y, self.right.width, self.right.height)
+	end,
+}
+--plates stuff ends here
+
+-- local left_plate = Plate:new("left")
+-- local right_plate = Plate:new("right")
 
 function play.load()
 	font = love.graphics.newFont(config.top_panel.font_height)
@@ -64,7 +224,7 @@ function play.load()
 end
 function play.update(dt)
 	-- ball:move()
-	local wall_hit = ball:detect_collision(left_plate, right_plate)
+	local wall_hit = ball:detect_collision(plates.left, plates.right)
 	if wall_hit == "left" then
 		-- panels:scored("right")
 		right_scored()
@@ -84,15 +244,17 @@ function play.update(dt)
 		end_screen.setWinner("right")
 	end
 
-	left_plate:move()
-	right_plate:move()
+	-- left_plate:move()
+	-- right_plate:move()
+	plates:move()
 
-	UpdateAbilities:Update(dt, ball, left_plate, right_plate)
+	-- UpdateAbilities:Update(dt, ball, left_plate, right_plate)
 end
 function play.draw()
 	ball:draw()
-	left_plate:draw()
-	right_plate:draw()
+	-- left_plate:draw()
+	-- right_plate:draw()
+	plates:draw()
 
 	-- panels:draw()
 	-- drawing panels
