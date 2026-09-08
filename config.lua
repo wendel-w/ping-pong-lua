@@ -1,22 +1,26 @@
 local M = {
+	sound = {
+		music = false,
+		effects = false,
+	},
 	score_to_win = 3,
 	window = {
-		height = 600,
-		width = 1000,
+		height = 900,
+		width = 1300,
 		resizable = true,
 	},
 	ball = {
 		x = 800,
 		y = 200,
 		radius = 20,
-		speed = 7,
+		speed = 11,
 		angle = math.rad(60),
 	},
 	plates = {
 		x = 30,
 		y = 300,
 		width = 20,
-		height = 100,
+		height = 200,
 		speed = 8,
 		controls = {
 			left_up = "w",

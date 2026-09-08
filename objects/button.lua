@@ -1,6 +1,7 @@
 local Button = {}
 Button.__index = Button
 
+local Sound = require("objects/sound")
 local config = require("config").button
 
 function Button:new(width, text)
@@ -22,6 +23,7 @@ function Button:isMouseInside(x, y)
 	-- love.graphics.circle("fill", self_x, 0, 1000)
 	if self_x < x and x < self_x + self.width and self_y < y and y < self_y + self.height then
 		print("detected")
+		Sound.play_pop()
 		return true
 	else
 		return false

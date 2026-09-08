@@ -38,7 +38,8 @@ function love.load()
 	-- states.gameover = require("states.gameover")
 
 	-- Start the game on the menu screen
-	switchState("play")
+	-- switchState("play")
+	switchState("menu")
 	-- switchState("end_screen")
 end
 

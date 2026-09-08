@@ -3,6 +3,7 @@
 -- local Panels = require("objects/panels")
 local end_screen = require("states.end_screen")
 
+local Sound = require("objects/sound")
 local config = require("config")
 
 local font
@@ -33,10 +34,12 @@ local ball = {
 	bounce_horizontally = function(self)
 		self.angle = self.angle * -1
 		self:fix_angle()
+		Sound.play_bob()
 	end,
 	bounce_vertically = function(self)
 		self.angle = math.rad(180) - self.angle
 		self:fix_angle()
+		Sound.play_bob()
 	end,
 	move = function(self)
 		self.x = self.x + (self.speed * math.cos(self.angle))
