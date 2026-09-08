@@ -47,6 +47,12 @@ function Plate:setHeight(h)
 end
 
 function Plate:draw()
+	local conf = require("config").plates
+	if self.side == "right" then
+		self.x = love.graphics.getWidth() - conf.x - conf.width
+	else
+	end
+	-- self.x = love.graphics.getWidth() - love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 	love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end
 

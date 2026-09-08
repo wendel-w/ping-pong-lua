@@ -1,4 +1,5 @@
 local M = {
+	score_to_win = 3,
 	window = {
 		height = 600,
 		width = 1000,
@@ -8,7 +9,7 @@ local M = {
 		x = 800,
 		y = 200,
 		radius = 20,
-		speed = 11,
+		speed = 7,
 		angle = math.rad(60),
 	},
 	plates = {
@@ -34,18 +35,18 @@ local M = {
 	},
 	abilities = {
 		size_increase = {
-			height = 220,
-			duration = 2,
-			cooldown = 6,
+			height = 300,
+			duration = 3,
+			cooldown = 2,
 			controls = {
 				left = "a",
 				right = "j",
 			},
 		},
 		speed_up_ball = {
-			speed = 16,
-			duration = 4,
-			cooldown = 6,
+			speed = 14,
+			duration = 1,
+			cooldown = 1,
 			controls = {
 				left = "q",
 				right = "u",

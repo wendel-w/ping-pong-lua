@@ -3,7 +3,7 @@ Button.__index = Button
 
 local config = require("config").button
 
-function Button:new(y, width, text)
+function Button:new(width, text)
 	local b = setmetatable({}, Button)
 	-- b.x = x
 	b.y = y
@@ -28,7 +28,8 @@ function Button:isMouseInside(x, y)
 	end
 end
 
-function Button:draw()
+function Button:draw(y)
+	self.y = y
 	love.graphics.rectangle(
 		"line",
 		love.graphics.getWidth() / 2 - self.width / 2,
