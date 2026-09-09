@@ -1,6 +1,6 @@
 local M = {
 	sound = {
-		music = false,
+		music = true,
 		effects = true,
 	},
 	score_to_win = 3,

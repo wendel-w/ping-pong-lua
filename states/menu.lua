@@ -10,10 +10,10 @@ function menu.update(dt) end
 function menu.mousepressed(x, y, button)
 	if button == 1 then
 		if start_button:isMouseInside(x, y) == true then
-			print("yes")
+			-- print("yes")
 			switchState("play")
 		else
-			print("no")
+			-- print("no")
 		end
 	end
 end

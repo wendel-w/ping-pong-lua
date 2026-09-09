@@ -1,5 +1,7 @@
 Config = require("config")
 
+local sound = require("objects/sound")
+
 -- function love.conf(t)
 -- 	t.window.title = "PingPong"
 -- 	-- w.window.width = Config.window.width
@@ -41,12 +43,14 @@ function love.load()
 	-- switchState("play")
 	switchState("menu")
 	-- switchState("end_screen")
+	sound.load()
 end
 
 function love.update(dt)
 	if currentState and currentState.update then
 		currentState.update(dt)
 	end
+	sound.check_bg_music()
 end
 function love.mousepressed(x, y, button)
 	if currentState and currentState.mousepressed then
