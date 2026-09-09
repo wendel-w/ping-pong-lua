@@ -31,6 +31,10 @@ local ball = {
 			self.angle = self.angle - 2 * math.pi
 		end
 	end,
+	modify_trajectory = function(self, a)
+		self.angle = self.angle + a
+		self:fix_angle()
+	end,
 	bounce_horizontally = function(self)
 		self.angle = self.angle * -1
 		self:fix_angle()
@@ -56,7 +60,7 @@ local ball = {
 		end
 		if self.x + self.radius > right or self.x - self.radius < left then
 			self:bounce_vertically()
-			print("hitted left/right wall")
+			-- print("hitted left/right wall")
 		end
 	end,
 	draw = function(self)
@@ -79,12 +83,12 @@ local ball = {
 		end
 		if (self.angle < math.rad(90) or math.rad(270) < self.angle) and self.x + self.radius > right then
 			self:bounce_vertically()
-			print("hit right wall")
+			-- print("hit right wall")
 			return_value = "right"
 		end
 		if math.rad(90) < self.angle and self.angle < math.rad(270) and self.x - self.radius < left then
 			self:bounce_vertically()
-			print("hit left wall")
+			-- print("hit left wall")
 			return_value = "left"
 		end
 
@@ -120,10 +124,13 @@ local ball = {
 		end
 		return return_value
 	end,
+	setSpeed = function(self, s)
+		self.speed = s
+	end,
 }
 --ball stuff end here
 
-local UpdateAbilities = require("abilities")
+-- local UpdateAbilities = require("abilities")
 
 local score_to_win = config.score_to_win
 local score = {
@@ -207,11 +214,120 @@ local plates = {
 		self.right.x = love.graphics.getWidth() - config.plates.x - self.right.width
 		love.graphics.rectangle("fill", self.right.x, self.right.y, self.right.width, self.right.height)
 	end,
+	setLeftHeight = function(self, h)
+		-- local original_position = self.y
+		local original_height = self.left.height
+		self.left.height = h
+		self.left.y = self.left.y - (self.left.height - original_height) / 2
+	end,
+	setRightHeight = function(self, h)
+		-- local original_position = self.y
+		local original_height = self.right.height
+		self.right.height = h
+		self.right.y = self.right.y - (self.right.height - original_height) / 2
+	end,
+	teleportLeft = function(self, top_panel_height, bottom_panel_height)
+		local old_y = self.left.y - top_panel_height + self.left.height / 2
+		local playground_height = love.graphics.getHeight() - top_panel_height - bottom_panel_height
+		-- local new_y = top_panel_height + playground_height - old_y
+		local new_y = top_panel_height + (old_y + playground_height / 2) % playground_height
+		self.left.y = new_y - self.left.height / 2
+	end,
+	teleportRight = function(self, top_panel_height, bottom_panel_height)
+		local old_y = self.right.y - top_panel_height + self.right.height / 2
+		local playground_height = love.graphics.getHeight() - top_panel_height - bottom_panel_height
+		-- local new_y = top_panel_height + playground_height - old_y
+		local new_y = top_panel_height + (old_y + playground_height / 2) % playground_height
+		self.right.y = new_y - self.right.height / 2
+	end,
 }
 --plates stuff ends here
 
 -- local left_plate = Plate:new("left")
 -- local right_plate = Plate:new("right")
+
+--abilities stuff start here
+local Timer = require("objects.timer")
+local config = require("config")
+local abilities = require("config").abilities
+local ability_states = {
+	left = {
+		size_increase = Timer:new("effect", abilities.size_increase.cooldown, abilities.size_increase.duration),
+		speed_up_ball = Timer:new("effect", abilities.speed_up_ball.cooldown, abilities.speed_up_ball.duration),
+		knuckleball = Timer:new("instant", abilities.knuckleball.cooldown),
+		teleport_enemy = Timer:new("instant", abilities.teleport_enemy.cooldown),
+	},
+	right = {
+		size_increase = Timer:new("effect", abilities.size_increase.cooldown, abilities.size_increase.duration),
+		speed_up_ball = Timer:new("effect", abilities.speed_up_ball.cooldown, abilities.speed_up_ball.duration),
+		knuckleball = Timer:new("instant", abilities.knuckleball.cooldown),
+		teleport_enemy = Timer:new("instant", abilities.teleport_enemy.cooldown),
+	},
+}
+function update_abilities(dt, ball, left_plate, right_plate)
+	--size_increase
+	local controls = abilities.size_increase.controls
+	ability_states.left.size_increase:update(dt, controls.left, function()
+		--activate
+		plates:setLeftHeight(config.abilities.size_increase.height)
+	end, function()
+		--deactivate
+		plates:setLeftHeight(config.plates.height)
+	end)
+
+	ability_states.right.size_increase:update(dt, controls.right, function()
+		--activate
+		plates:setRightHeight(config.abilities.size_increase.height)
+	end, function()
+		--deactivate
+		plates:setRightHeight(config.plates.height)
+	end)
+
+	-- speed_up_ball
+	controls = abilities.speed_up_ball.controls
+	ability_states.left.speed_up_ball:update(dt, controls.left, function()
+		--activate
+		ball:setSpeed(abilities.speed_up_ball.speed)
+	end, function()
+		--deactivate
+		ball:setSpeed(config.ball.speed)
+	end)
+	ability_states.right.speed_up_ball:update(dt, controls.right, function()
+		--activate
+		ball:setSpeed(abilities.speed_up_ball.speed)
+	end, function()
+		--deactivate
+		ball:setSpeed(config.ball.speed)
+	end)
+
+	-- knuckleball
+	local min = abilities.knuckleball.limit_min
+	local max = abilities.knuckleball.limit_max
+	local r = min + math.random() * (max - min) -- e.g., 5.43819...
+	-- print("r=", r)
+	controls = abilities.knuckleball.controls
+	ability_states.left.knuckleball:update(dt, controls.left, function()
+		--activate
+		print("r=", r)
+		ball:modify_trajectory(r)
+	end, function() end)
+	ability_states.right.knuckleball:update(dt, controls.right, function()
+		--activate
+		ball:modify_trajectory(r)
+	end, function() end)
+
+	--teleport_enemy
+	controls = abilities.teleport_enemy.controls
+	ability_states.left.teleport_enemy:update(dt, controls.left, function()
+		--activate
+		plates:teleportRight(config.top_panel.height, config.bottom_panel.height)
+	end, function() end)
+	ability_states.right.teleport_enemy:update(dt, controls.right, function()
+		--activate
+		plates:teleportLeft(config.top_panel.height, config.bottom_panel.height)
+	end, function() end)
+end
+--abilities stuff end here
 
 function play.load()
 	font = love.graphics.newFont(config.top_panel.font_height)
@@ -238,11 +354,11 @@ function play.update(dt)
 	-- local winner = panels:check_winner()
 	local winner = check_winner()
 	if winner == "left" then
-		print("left won")
+		-- print("left won")
 		switchState("end_screen")
 		end_screen.setWinner("left")
 	elseif winner == "right" then
-		print("right won")
+		-- print("right won")
 		switchState("end_screen")
 		end_screen.setWinner("right")
 	end
@@ -252,6 +368,7 @@ function play.update(dt)
 	plates:move()
 
 	-- UpdateAbilities:Update(dt, ball, left_plate, right_plate)
+	update_abilities(dt, ball, plates.left, plates.right)
 end
 function play.draw()
 	ball:draw()

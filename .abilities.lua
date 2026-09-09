@@ -1,6 +1,6 @@
 local Abilities = {}
-local Timer = require("objects.timer")
 
+local Timer = require("objects.timer")
 local config = require("config")
 local abilities = require("config").abilities
 local ability_states = {
