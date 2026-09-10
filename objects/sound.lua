@@ -51,7 +51,7 @@ function sound.check_bg_music()
 				current = 1
 			end
 			bg_music[current]:play()
-			print("now playing", current)
+			-- print("now playing", current)
 		end
 	end
 end
