@@ -35,13 +35,13 @@ local M = {
 		font_height = 19,
 	},
 	bottom_panel = {
-		height = 50,
+		height = 60,
 	},
 	abilities = {
 		size_increase = {
 			height = 300,
 			duration = 3,
-			cooldown = 2,
+			cooldown = 3,
 			controls = {
 				left = "a",
 				right = "j",

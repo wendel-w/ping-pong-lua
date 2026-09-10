@@ -14,6 +14,17 @@ function Timer:new(type, cooldown, d)
 	t.state = "ready"
 	return t
 end
+function Timer:getStatus()
+    if self.state=="ready" then
+        return -1
+    end
+    if self.state=="duration" then
+        return self.duration
+    end
+    if self.state=="cooldown" then
+        return self.cooldown
+    end
+end
 function Timer:update(dt, cast_key, effect_start, effect_over)
 	if self.state == "ready" and love.keyboard.isDown(cast_key) then
 		self.timer = self.duration
@@ -36,11 +47,28 @@ function Timer:update(dt, cast_key, effect_start, effect_over)
 		-- print("cooldown expired, ability ready")
 	end
 end
--- function Timer:cast()
--- 	if self.state == "ready" then
--- 		self.timer = self.duration
--- 		self.state = "duration"
--- 		print("casted")
--- 	end
--- end
+
+function Timer:draw(x, y)
+    local def_rad=20
+    if self.state=="ready" then
+        love.graphics.circle("fill", x, y, def_rad)
+    end
+    if self.state=="duration" then
+
+        rad=(self.duration-self.timer)/(self.duration)*def_rad
+        love.graphics.setColor(1, 1, 1, 0.7)
+        love.graphics.circle("fill", x, y, rad)
+        
+    end
+    if self.state=="cooldown" then
+        rad=(self.cooldown-self.timer)/(self.cooldown)*def_rad
+        love.graphics.setColor(255, 255, 255, 0.5)
+        love.graphics.setColor(1, 1, 1, 0.7)
+        love.graphics.circle("fill", x, y, rad)
+        love.graphics.circle("fill", x, y, def_rad)
+    end
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.circle("line", x, y, def_rad)
+end
+
 return Timer

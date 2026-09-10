@@ -415,6 +415,17 @@ function play.draw()
 		love.graphics.getWidth(),
 		love.graphics.getWidth() - top_panel.height - bottom_panel.height
 	)
+
+    --drawing the cooldown/duration circles
+    ability_states.left.size_increase:draw(50,love.graphics.getHeight()-config.bottom_panel.height/2)
+    ability_states.left.speed_up_ball:draw(100,love.graphics.getHeight()-config.bottom_panel.height/2)
+    ability_states.left.knuckleball:draw(150,love.graphics.getHeight()-config.bottom_panel.height/2)
+    ability_states.left.teleport_enemy:draw(200,love.graphics.getHeight()-config.bottom_panel.height/2)
+    
+    ability_states.right.size_increase:draw(love.graphics.getWidth()-200,love.graphics.getHeight()-config.bottom_panel.height/2)
+    ability_states.right.speed_up_ball:draw(love.graphics.getWidth()-150,love.graphics.getHeight()-config.bottom_panel.height/2)
+    ability_states.right.knuckleball:draw(love.graphics.getWidth()-100,love.graphics.getHeight()-config.bottom_panel.height/2)
+    ability_states.right.teleport_enemy:draw(love.graphics.getWidth()-50,love.graphics.getHeight()-config.bottom_panel.height/2)
 end
 
 return play
