@@ -31,13 +31,14 @@ end
 
 function sound.load()
 	bg_music = {
-		love.audio.newSource("sound/xtremefreddy-resurgence.mp3", "static"),
-		love.audio.newSource("sound/xtremefreddy-game-music-loop-3.mp3", "static"),
+		love.audio.newSource("sound/xtremefreddy-resurgence.mp3", "stream"),
+		love.audio.newSource("sound/xtremefreddy-game-music-loop-3.mp3", "stream"),
+        love.audio.newSource("sound/freesound_community-video-game-music-loop-27629.mp3", "stream")
 		-- bg_music[3] = love.audio.newSource("sound/xtremefreddy-resurgence.mp3")
 	}
+	-- bg_music[1]:setVolume(0.9)
 	next = 1
-	current = 1
-	-- bg_music[1]:play()
+	current = 2
 end
 
 function sound.check_bg_music()
@@ -45,13 +46,12 @@ function sound.check_bg_music()
 		-- current = 1
 		-- print("current", current)
 		if bg_music[current]:isPlaying() == false then
-			next = current + 1
-			if next > #bg_music then
-				next = 1
+			current = current + 1
+			if current > #bg_music then
+				current = 1
 			end
-			bg_music[next]:play()
-			print("now playing", next)
-			current = next
+			bg_music[current]:play()
+			print("now playing", current)
 		end
 	end
 end
