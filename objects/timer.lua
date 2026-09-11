@@ -48,8 +48,10 @@ function Timer:update(dt, cast_key, effect_start, effect_over)
 	end
 end
 
+local config = require("config")
+
 function Timer:draw(x, y)
-    local def_rad=20
+    local def_rad=config.abilities.radius
     if self.state=="ready" then
         love.graphics.circle("fill", x, y, def_rad)
     end

@@ -371,6 +371,8 @@ function play.update(dt)
 	update_abilities(dt, ball, plates.left, plates.right)
 end
 function play.draw()
+	local window_width = love.graphics.getWidth()
+	local window_height = love.graphics.getHeight()
 	ball:draw()
 	-- left_plate:draw()
 	-- right_plate:draw()
@@ -415,17 +417,56 @@ function play.draw()
 		love.graphics.getWidth(),
 		love.graphics.getWidth() - top_panel.height - bottom_panel.height
 	)
+	--drawing the cooldown/duration circles
 
-    --drawing the cooldown/duration circles
-    ability_states.left.size_increase:draw(50,love.graphics.getHeight()-config.bottom_panel.height/2)
-    ability_states.left.speed_up_ball:draw(100,love.graphics.getHeight()-config.bottom_panel.height/2)
-    ability_states.left.knuckleball:draw(150,love.graphics.getHeight()-config.bottom_panel.height/2)
-    ability_states.left.teleport_enemy:draw(200,love.graphics.getHeight()-config.bottom_panel.height/2)
-    
-    ability_states.right.size_increase:draw(love.graphics.getWidth()-200,love.graphics.getHeight()-config.bottom_panel.height/2)
-    ability_states.right.speed_up_ball:draw(love.graphics.getWidth()-150,love.graphics.getHeight()-config.bottom_panel.height/2)
-    ability_states.right.knuckleball:draw(love.graphics.getWidth()-100,love.graphics.getHeight()-config.bottom_panel.height/2)
-    ability_states.right.teleport_enemy:draw(love.graphics.getWidth()-50,love.graphics.getHeight()-config.bottom_panel.height/2)
+	local window_half_width = window_width / 2
+	local padding = config.abilities.padding
+	local radius = config.abilities.radius
+	local padding = config.abilities.padding
+	local start = window_half_width / 2 - config.abilities.padding * 3 / 2 - radius * 4
+
+	ability_states.left.size_increase:draw(start + radius, window_height - config.bottom_panel.height / 2)
+	ability_states.left.speed_up_ball:draw(start + radius * 3 + padding, window_height - config.bottom_panel.height / 2)
+	ability_states.left.knuckleball:draw(
+		start + radius * 5 + padding * 2,
+		window_height - config.bottom_panel.height / 2
+	)
+	ability_states.left.teleport_enemy:draw(
+		start + radius * 7 + padding * 3,
+		window_height - config.bottom_panel.height / 2
+	)
+
+	start = window_width * 3 / 4 - 4 * radius - 3 / 2 * padding
+
+	ability_states.right.size_increase:draw(start + radius, window_height - config.bottom_panel.height / 2)
+	ability_states.right.speed_up_ball:draw(
+		start + radius * 3 + padding,
+		window_height - config.bottom_panel.height / 2
+	)
+	ability_states.right.knuckleball:draw(
+		start + radius * 5 + padding * 2,
+		window_height - config.bottom_panel.height / 2
+	)
+	ability_states.right.teleport_enemy:draw(
+		start + radius * 7 + padding * 3,
+		window_height - config.bottom_panel.height / 2
+	)
+	-- ability_states.right.size_increase:draw(
+	-- 	love.graphics.getWidth() - 200,
+	-- 	love.graphics.getHeight() - config.bottom_panel.height / 2
+	-- )
+	-- ability_states.right.speed_up_ball:draw(
+	-- 	love.graphics.getWidth() - 150,
+	-- 	love.graphics.getHeight() - config.bottom_panel.height / 2
+	-- )
+	-- ability_states.right.knuckleball:draw(
+	-- 	love.graphics.getWidth() - 100,
+	-- 	love.graphics.getHeight() - config.bottom_panel.height / 2
+	-- )
+	-- ability_states.right.teleport_enemy:draw(
+	-- 	love.graphics.getWidth() - 50,
+	-- 	love.graphics.getHeight() - config.bottom_panel.height / 2
+	-- )
 end
 
 return play

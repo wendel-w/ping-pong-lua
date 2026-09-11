@@ -13,7 +13,7 @@ local M = {
 		x = 800,
 		y = 200,
 		radius = 20,
-		speed = 11,
+		speed = 8,
 		angle = math.rad(60),
 	},
 	plates = {
@@ -38,6 +38,8 @@ local M = {
 		height = 60,
 	},
 	abilities = {
+		padding = 20,
+		radius = 20,
 		size_increase = {
 			height = 300,
 			duration = 3,
@@ -48,7 +50,7 @@ local M = {
 			},
 		},
 		speed_up_ball = {
-			speed = 14,
+			speed = 12,
 			duration = 1,
 			cooldown = 1,
 			controls = {
