@@ -18,6 +18,6 @@ This is a ping-pong game (with some extras) written in lua with the love2d frame
 
 Feel free to take a peek into `config.lua` and edit it if you want to. There you can modify the proporitons of the drawn elements, the controls, or the balancing.
 
-### Other things
+### Resources
 
 Music from pixabay.com
