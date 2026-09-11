@@ -1,6 +1,6 @@
 # ping-pong-lua
 
-> This is a ping-pong game (with some extras) written in lua with the love2d framework
+This is a ping-pong game (with some extras) written in lua with the love2d framework
 
 ### Installation
 
@@ -16,7 +16,7 @@
 
 ### Configuration
 
-> Feel free to take a peek into `config.lua` and edit it if you want to. There you can modify the proporitons of the drawn elements, the controls, or the balancing.
+Feel free to take a peek into `config.lua` and edit it if you want to. There you can modify the proporitons of the drawn elements, the controls, or the balancing.
 
 ### Other things
 
